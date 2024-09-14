@@ -39,7 +39,7 @@
     <div id="unido-content" class="content">Loading UNIDO.md...</div>
 
     <h1>UNIDO2.md by GPTo1</h1>
-    <div id="unido-content" class="content">Loading UNIDO.md...</div>
+    <div id="unido2-content" class="content">Loading UNIDO2.md...</div>
 
     <script>
         // 줄바꿈을 <br>로 변환하는 함수
@@ -69,15 +69,14 @@
             console.error('Error:', error);
         });
 
-
         // UNIDO2.md 파일 가져오기
         fetch('https://raw.githubusercontent.com/JisungEda55/assetzip/main/UNIDO2.md')
         .then(response => response.text())
         .then(data => {
-            document.getElementById('unido-content').innerHTML = formatText(data);
+            document.getElementById('unido2-content').innerHTML = formatText(data);
         })
         .catch(error => {
-            document.getElementById('unido-content').textContent = 'Error loading UNIDO.md';
+            document.getElementById('unido2-content').textContent = 'Error loading UNIDO2.md';
             console.error('Error:', error);
         });
     </script>
