@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MD</title>
+    <title>Dot MD File</title>
     <style>
         @font-face {
             font-family: 'LINESeedKR-Bd';
@@ -21,20 +21,45 @@
         h1, h2, ul, li, pre {
             font-family: 'LINESeedKR-Bd';
         }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>Dot MD File</h1>
-    <pre id="content">Loading...</pre>
+    <h1>UNIV.md File</h1>
+    <pre id="univ-content">Loading UNIV.md...</pre>
+
+    <h1>UNIDO.md File</h1>
+    <pre id="unido-content">Loading UNIDO.md...</pre>
 
     <script>
+        // UNIV.md 파일 가져오기
         fetch('https://raw.githubusercontent.com/JisungEda55/assetzip/main/UNIV.md')
         .then(response => response.text())
         .then(data => {
-            document.getElementById('content').textContent = data;
+            document.getElementById('univ-content').textContent = data;
         })
         .catch(error => {
-            document.getElementById('content').textContent = 'Error loading content';
+            document.getElementById('univ-content').textContent = 'Error loading UNIV.md';
+            console.error('Error:', error);
+        });
+
+        // UNIDO.md 파일 가져오기
+        fetch('https://raw.githubusercontent.com/JisungEda55/assetzip/main/UNIDO.md')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('unido-content').textContent = data;
+        })
+        .catch(error => {
+            document.getElementById('unido-content').textContent = 'Error loading UNIDO.md';
             console.error('Error:', error);
         });
     </script>
