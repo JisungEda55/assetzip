@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD</title>
+    <style>
+        @font-face {
+            font-family: 'LINESeedKR-Bd';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'LINESeedKR-Bd', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        h1, h2, ul, li, pre {
+            font-family: 'LINESeedKR-Bd';
+        }
+    </style>
+</head>
+<body>
+    <h1>Dot MD File</h1>
+    <pre id="content">Loading...</pre>
+
+    <script>
+        fetch('https://raw.githubusercontent.com/JisungEda55/assetzip/main/UNIV.md')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('content').textContent = data;
+        })
+        .catch(error => {
+            document.getElementById('content').textContent = 'Error loading content';
+            console.error('Error:', error);
+        });
+    </script>
+</body>
+</html>
