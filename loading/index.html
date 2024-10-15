@@ -19,7 +19,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: transparent;
+            background-color: #FCF8F3;
             font-family: 'ONE-Mobile-POP', sans-serif;
         }
 
@@ -31,7 +31,7 @@
             font-size: 2em;
             margin-bottom: 20px;
             transition: opacity 1s ease-in-out; /* 텍스트 애니메이션 */
-            color: #ffffff; /* 텍스트 색상 */
+            color: #010101; /* 텍스트 색상 */
         }
 
         .progress-bar {
@@ -98,7 +98,7 @@
     }, 50000); // 50,000ms = 50초
 
     // 60초 후에 텍스트 변경
-    setTimeout(function() {
+    setTimeout(function() {	
         document.getElementById('loading-text').textContent = "이제 시작합니다";
         document.getElementById('loading-text').style.opacity = 0; // 텍스트 페이드 아웃
         setTimeout(function() {
