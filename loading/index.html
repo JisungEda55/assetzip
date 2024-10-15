@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading..</title>
+    <style>
+        @font-face {
+            font-family: 'ONE-Mobile-POP';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/ONE-Mobile-POP.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+            font-family: 'ONE-Mobile-POP', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .loading-text {
+            font-size: 2em;
+            margin-bottom: 20px;
+            transition: opacity 1s ease-in-out; /* 텍스트 애니메이션 */
+        }
+
+        .progress-bar {
+            width: 400px; /* 고정된 너비 */
+            background-color: #ccc;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 25px;
+            width: 0;
+            background-color: #fc3c1c;
+            border-radius: 25px;
+            transition: width 60s linear; /* 로딩바 애니메이션 */
+        }
+
+        .progress.start {
+            width: 100%; /* 60초 동안 100%까지 채워짐 */
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="loading-text" id="loading-text">방송을 준비하는 중...</div>
+    <div class="progress-bar">
+        <div class="progress" id="progress-bar"></div>
+    </div>
+</div>
+
+<script>
+    // 로딩바 시작
+    setTimeout(function() {
+        document.getElementById('progress-bar').classList.add('start');
+    }, 100); // 페이지 로드 후 로딩바 시작
+
+    // 50초 후에 텍스트 변경 (60s 중 50s 시점에 텍스트 변경)
+    setTimeout(function() {
+        document.getElementById('loading-text').textContent = "곧 시작합니다";
+        document.getElementById('loading-text').style.opacity = 0; // 텍스트 페이드 아웃
+        setTimeout(function() {
+            document.getElementById('loading-text').style.opacity = 1; // 텍스트 페이드 인
+        }, 500); // 반초 후 다시 페이드 인
+    }, 50000); // 50,000ms = 50초
+
+    // 60초 후에 텍스트 변경 (로딩바가 끝나면 텍스트 변경)
+    setTimeout(function() {
+        document.getElementById('loading-text').textContent = "이제 시작합니다";
+        document.getElementById('loading-text').style.opacity = 0; // 텍스트 페이드 아웃
+        setTimeout(function() {
+            document.getElementById('loading-text').style.opacity = 1; // 텍스트 페이드 인
+        }, 500); // 반초 후 다시 페이드 인
+    }, 60000); // 60,000ms = 60초
+</script>
+
+</body>
+</html>
