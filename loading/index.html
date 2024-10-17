@@ -46,11 +46,11 @@
             width: 0;
             background-color: #fc3c1c;
             border-radius: 25px;
-            transition: width 60s linear; /* 로딩바 애니메이션 */
+            transition: width 240s linear; /* 4분(240초) 동안 로딩바가 채워짐 */
         }
 
         .progress.start {
-            width: 100%; /* 60초 동안 100%까지 채워짐 */
+            width: 100%; /* 240초 동안 100%까지 채워짐 */
         }
 
     </style>
@@ -71,15 +71,22 @@
         "방송을 준비하는 중.",
         "방송을 준비하는 중..",
         "방송을 준비하는 중..."
+        "방송을 준비하는 중",
+        "방송을 준비하는 중.",
+        "방송을 준비하는 중..",
+        "방송을 준비하는 중..."
+        "방송을 준비하는 중",
+        "방송을 준비하는 중.",
+        "방송을 준비하는 중..",
+        "방송을 준비하는 중..."
+        "= 방송에 재미를 추가하는 중 ="
     ];
     let currentTextIndex = 0; // 배열의 현재 인덱스
 
     // 1초마다 텍스트 변경
     const textInterval = setInterval(function() {
-        if (currentTextIndex < 4) {
-            currentTextIndex = (currentTextIndex + 1) % textSequence.length;
-            document.getElementById('loading-text').textContent = textSequence[currentTextIndex];
-        }
+        currentTextIndex = (currentTextIndex + 1) % textSequence.length;
+        document.getElementById('loading-text').textContent = textSequence[currentTextIndex];
     }, 1000); // 1000ms = 1초
 
     // 로딩바 시작
@@ -87,7 +94,7 @@
         document.getElementById('progress-bar').classList.add('start');
     }, 100); // 페이지 로드 후 로딩바 시작
 
-    // 50초 후에 텍스트 변경
+    // 180초 후에 텍스트 변경 (3분)
     setTimeout(function() {
         clearInterval(textInterval); // 텍스트 변경 간격 멈추기
         document.getElementById('loading-text').textContent = "곧 시작합니다";
@@ -95,16 +102,16 @@
         setTimeout(function() {
             document.getElementById('loading-text').style.opacity = 1; // 텍스트 페이드 인
         }, 500); // 반초 후 다시 페이드 인
-    }, 50000); // 50,000ms = 50초
+    }, 180000); // 180,000ms = 180초 (3분)
 
-    // 60초 후에 텍스트 변경
+    // 210초 후에 텍스트 변경 (3.5분)
     setTimeout(function() {	
         document.getElementById('loading-text').textContent = "이제 시작합니다";
         document.getElementById('loading-text').style.opacity = 0; // 텍스트 페이드 아웃
         setTimeout(function() {
             document.getElementById('loading-text').style.opacity = 1; // 텍스트 페이드 인
         }, 500); // 반초 후 다시 페이드 인
-    }, 60000); // 60,000ms = 60초
+    }, 210000); // 210,000ms = 210초 (3.5분)
 </script>
 
 </body>
