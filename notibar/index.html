@@ -23,7 +23,7 @@
         }
 
         .notification-box {
-            width: 950px;
+            width: 850px;
             height: 40px;
             background-color: #fc3c1c;
             border-top-left-radius: 18px;
@@ -62,7 +62,7 @@
     <div class="button-container">
         <button onclick="moveUp()">UP</button>
         <button onclick="moveDown()">Down</button>
-        <button onclick="autoSwitch()">Auto (4.8Min)</button>
+        <button onclick="autoSwitch()">Auto (2.7Min)</button>
     </div>
 
     <script>
@@ -75,7 +75,8 @@
             '• 임신 중 음주는 기형아 출생 위험을 높입니다.', 
             '• 지나친 음주는 암 발생의 원인이 됩니다.', 
             '• 청소년 음주는 성장과 뇌 발달을 저해하며, 임신 중 음주는 태아의 기형 발생이나 유산의 위험을 높입니다.', 
-            '• 지나친 음주는 뇌졸중, 기억력 손상이나 치매를 유발합니다.'
+            '• 지나친 음주는 뇌졸중, 기억력 손상이나 치매를 유발합니다.',
+            '끝'
         ]; // 텍스트 배열
         let currentIndex = 0; // 텍스트 배열의 현재 인덱스
         let intervalId; // setInterval ID를 저장하기 위한 변수
@@ -98,7 +99,7 @@
                 } else {
                     moveUp();
                 }
-            }, 287000); // 287초 후 실행
+            }, 161000); // 161초 후 실행
         }
 
         // 텍스트 순서를 초기화하고 5초마다 텍스트 변경
