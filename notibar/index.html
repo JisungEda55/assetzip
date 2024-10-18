@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTB Alcohol</title>
+    <style>
+        @font-face {
+            font-family: 'LINESeedKR-Bd';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: transparent;
+        }
+
+        .notification-box {
+            width: 950px;
+            height: 40px;
+            background-color: #fc3c1c;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'LINESeedKR-Bd', sans-serif;
+            font-size: 16px;
+            color: #ffffff;
+            position: relative;
+            top: 0;
+            transition: top 1.5s cubic-bezier(0.25, 0.5, 0.23, 1);
+        }
+
+        .button-container {
+            margin-top: 5px;
+        }
+
+        .button-container button {
+            background-color: #fc3c1c;
+      color: #f5f5f7;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-box" id="notificationBox">안내사항</div>
+
+    <div class="button-container">
+        <button onclick="moveUp()">UP</button>
+        <button onclick="moveDown()">Down</button>
+        <button onclick="autoSwitch()">Auto (4.8Min)</button>
+    </div>
+
+    <script>
+        let currentPosition = 'down'; // 초기 위치는 down
+        let textArray = [
+            '안내사항',
+            '지성이오24는 보건복지부의 「 미디어 음주 장면 가이드라인 」을 준수합니다.',
+            '음주를 긍적적으로 묘사할 의사가 없음을 확인해드립니다. - 지성이오24',
+            '• 알코올은 발암물질로 지나친 음주는 간암, 위암 등을 일으킵니다.', 
+            '• 임신 중 음주는 기형아 출생 위험을 높입니다.', 
+            '• 지나친 음주는 암 발생의 원인이 됩니다.', 
+            '• 청소년 음주는 성장과 뇌 발달을 저해하며, 임신 중 음주는 태아의 기형 발생이나 유산의 위험을 높입니다.', 
+            '• 지나친 음주는 뇌졸중, 기억력 손상이나 치매를 유발합니다.'
+        ]; // 텍스트 배열
+        let currentIndex = 0; // 텍스트 배열의 현재 인덱스
+        let intervalId; // setInterval ID를 저장하기 위한 변수
+
+        function moveUp() {
+            document.getElementById('notificationBox').style.top = '-50px';
+            currentPosition = 'up';
+            resetText(); // 텍스트 순서를 초기화
+        }
+
+        function moveDown() {
+            document.getElementById('notificationBox').style.top = '0px';
+            currentPosition = 'down';
+        }
+
+        function autoSwitch() {
+            setTimeout(() => {
+                if (currentPosition === 'up') {
+                    moveDown();
+                } else {
+                    moveUp();
+                }
+            }, 287000); // 287초 후 실행
+        }
+
+        // 텍스트 순서를 초기화하고 5초마다 텍스트 변경
+        function resetText() {
+            currentIndex = 0; // 텍스트 인덱스를 초기화
+            document.getElementById('notificationBox').textContent = textArray[currentIndex]; // 첫 번째 텍스트 표시
+            clearInterval(intervalId); // 기존의 setInterval 중지
+            intervalId = setInterval(() => {
+                currentIndex = (currentIndex + 1) % textArray.length; // 배열 순환
+                document.getElementById('notificationBox').textContent = textArray[currentIndex];
+            }, 6000); // 6초마다 변경
+        }
+
+        // 페이지가 로드되면 텍스트 자동 변경 시작
+        resetText();
+    </script>
+</body>
+</html>
