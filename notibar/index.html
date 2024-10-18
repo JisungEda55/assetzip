@@ -6,12 +6,10 @@
     <title>NTB Alcohol</title>
     <style>
         @font-face {
-            font-family: 'LINESeedKR-Bd';
-            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
-            font-weight: 700;
-            font-style: normal;
-        }
-
+    font-family: 'NanumSquareNeoExtraBold';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.ttf) format("truetype");
+}
         body, html {
             height: 100%;
             margin: 0;
@@ -31,7 +29,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'LINESeedKR-Bd', sans-serif;
+            font-family: 'NanumSquareNeoExtraBold', sans-serif;
             font-size: 16px;
             color: #ffffff;
             position: relative;
@@ -69,14 +67,14 @@
         let currentPosition = 'down'; // 초기 위치는 down
         let textArray = [
             '안내사항',
-            '지성이오24는 보건복지부의 「 미디어 음주 장면 가이드라인 」을 준수합니다.',
+            '지성이오24는 보건복지부의 「 미디어 음주 장면 가이드라인 」를 준수합니다.',
             '음주를 긍적적으로 묘사할 의사가 없음을 확인해드립니다. - 지성이오24',
             '• 알코올은 발암물질로 지나친 음주는 간암, 위암 등을 일으킵니다.', 
             '• 임신 중 음주는 기형아 출생 위험을 높입니다.', 
             '• 지나친 음주는 암 발생의 원인이 됩니다.', 
             '• 청소년 음주는 성장과 뇌 발달을 저해하며, 임신 중 음주는 태아의 기형 발생이나 유산의 위험을 높입니다.', 
             '• 지나친 음주는 뇌졸중, 기억력 손상이나 치매를 유발합니다.',
-            '끝'
+            ' '
         ]; // 텍스트 배열
         let currentIndex = 0; // 텍스트 배열의 현재 인덱스
         let intervalId; // setInterval ID를 저장하기 위한 변수
