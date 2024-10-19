@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDH Caption</title>
+    <style>
+        @font-face {
+            font-family: 'NanumSquareNeoBold';
+            src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot);
+            src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.ttf) format("truetype");
+        }
+
+        body {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            font-family: 'NanumSquareNeoBold', Arial, sans-serif;
+            background-color: black;
+        }
+
+        .h1-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin: 0;
+            opacity: 0;
+            color: white;
+            transition: opacity 0.39s ease-in-out, top 1s cubic-bezier(0.25, 0.5, 0.23, 1);
+        }
+
+        .h1-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 4px;
+            z-index: -1;
+            transition: opacity 0.39s ease-in-out, top 1s cubic-bezier(0.25, 0.5, 0.23, 1);
+            opacity: 0;
+        }
+
+        .button-container {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .button-container button {
+            background-color: #1c1c1c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="h1-wrapper">
+        <div class="h1-background" id="background"></div>
+        <h1 id="displayText"></h1>
+    </div>
+    <div class="button-container">
+        <button onclick="toggleBackground()" id="backgroundSwitch" style="background-color: red;">배경: OFF</button>
+        <button onclick="showText('사랑해')">사랑해</button>
+        <button onclick="showText('좋아해')">좋아해</button>
+        <button onclick="showText('행복해')">행복해</button>
+        <button onclick="showDemoText()">Demo</button>
+    </div>
+
+    <script>
+        let backgroundEnabled = false;
+
+        function toggleBackground() {
+            backgroundEnabled = !backgroundEnabled;
+            const backgroundSwitch = document.getElementById('backgroundSwitch');
+            backgroundSwitch.textContent = `배경: ${backgroundEnabled ? 'ON' : 'OFF'}`;
+            backgroundSwitch.style.backgroundColor = backgroundEnabled ? 'green' : 'red';
+        }
+
+        function showText(text) {
+            const displayText = document.getElementById('displayText');
+            const background = document.getElementById('background');
+            displayText.textContent = `[${text}]`;
+            displayText.style.opacity = '1';
+            if (backgroundEnabled) {
+                background.style.opacity = '1';
+            }
+
+            setTimeout(() => {
+                displayText.style.opacity = '0';
+                background.style.opacity = '0';
+            }, 3000);
+        }
+
+        function showDemoText() {
+            const displayText = document.getElementById('displayText');
+            const background = document.getElementById('background');
+            if (displayText.textContent === '[이것은 데모입니다]') {
+                displayText.style.opacity = '0';
+                background.style.opacity = '0';
+                displayText.textContent = '';
+            } else {
+                displayText.textContent = '[이것은 데모입니다]';
+                displayText.style.opacity = '1';
+                if (backgroundEnabled) {
+                    background.style.opacity = '1';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
