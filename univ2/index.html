@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNIV</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/sj484q8/Feed.webp">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* 모바일 최적화 추가 및 개선된 CSS 스타일 */
+body {
+  font-family: 'Pretendard';
+  line-height: 1.6;
+  margin: 20px;
+  background-color: #2272eb;
+  color: #010101;
+}
+.header {
+  font-weight: 700;
+  font-size: 1.2em;
+  text-align: right;
+  color: #fff;
+}
+.main-title {
+  text-align: left;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  margin-top: 5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.tts-button {
+  margin: 15px 0;
+  padding: 5px;
+  background-color: white;
+  color: #0d0d0d;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tts-button svg {
+  width: 24px;
+  height: 24px;
+}
+.author {
+  font-size: 1em;
+  font-weight: 600;
+  text-align: right;
+  color: #ffffff;
+}
+h2 {
+  font-size: 1.6em;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  text-align: left;
+}
+.subtitle {
+  font-size: 13px;
+  text-align: center;
+  font-weight: 500;
+  color: #010101;
+}
+.content {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f2f2f7;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  text-align: left;
+}
+.content p {
+  margin-bottom: 10px;
+  font-size: 1em;
+  font-weight: 600;
+}
+.footer {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+.footer a {
+  margin: 5px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 20px;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+.footer-text {
+  font-weight: 600;
+  font-size: 13px;
+}
+.image-wrapper {
+  text-align: center;
+  margin-bottom: 15px;
+}
+.image-wrapper img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 730px 이상 화면에서의 스타일 설정 */
+@media (min-width: 731px) {
+  body {
+    margin: 0 auto;
+    max-width: 730px;
+    background-color: #2272eb;
+    padding: 20px;
+  }
+  .header {
+    font-size: 1.5em;
+    text-align: right;
+    margin-top: -12px;
+  }
+  .main-title {
+    text-align: left;
+    font-size: 2.93em;
+    margin-bottom: 10px;
+    margin-top: 5px;
+  }
+  .author {
+    font-size: 1.2em;
+    text-align: right;
+  }
+  h2 {
+    font-size: 1.8em;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .subtitle {
+    font-size: 13.9px;
+    text-align: center;
+  }
+  .content {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f2f2f7;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .content p {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+  }
+  .footer {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  .footer a {
+    margin: 5px;
+    font-size: 24px;
+  }
+  .footer-text {
+    font-size: 13.9px;
+  }
+  .image-wrapper {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .image-wrapper img {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 385px 이하 화면에서의 스타일 설정 */
+@media (max-width: 385px) {
+  body {
+    margin: 0 auto;
+    padding: 15px;
+    background-color: #2272eb;
+  }
+  .header {
+    font-size: 1.2em;
+    text-align: center;
+    margin-top: 0;
+  }
+  .main-title {
+    font-size: 2em;
+    text-align: center;
+  }
+  .author {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 1.4em;
+    text-align: left;
+  }
+  .subtitle {
+    font-size: 11px;
+    text-align: center;
+  }
+  .content {
+    padding: 10px;
+  }
+  .content p {
+    font-size: 0.9em;
+  }
+  .footer {
+    margin-bottom: 15px;
+  }
+  .footer a {
+    font-size: 18px;
+  }
+  .footer-text {
+    font-size: 11px;
+  }
+  .image-wrapper img {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+  </style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // 읽기 버튼 생성
+    const ttsButton = document.createElement('button');
+    ttsButton.className = 'tts-button';
+    ttsButton.innerHTML = `<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#2272eb"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="10" cy="6" r="4" stroke="#2272eb" stroke-width="1.5"></circle> <path d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="#2272eb" stroke-width="1.5"></path> <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="#2272eb" stroke-width="1.5" stroke-linecap="round"></path> <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="#2272eb" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>`;
+    const mainTitle = document.querySelector('.main-title');
+    mainTitle.insertAdjacentElement('afterend', ttsButton);
+
+    let isReading = false;
+    let utterance;
+
+    // 버튼 클릭 이벤트
+    ttsButton.addEventListener('click', function () {
+      if (!isReading) {
+        const content = document.querySelector('.content').innerText;
+        utterance = new SpeechSynthesisUtterance(content);
+        utterance.lang = 'ko-KR'; // 한국어로 설정
+        window.speechSynthesis.speak(utterance);
+        ttsButton.innerHTML = `<svg width="24px" height="24px" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#eb2222"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <circle cx="10" cy="6" r="4" stroke="#eb2222" stroke-width="1.9200000000000004"></circle> <path d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="#eb2222" stroke-width="1.9200000000000004"></path> <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="#eb2222" stroke-width="1.9200000000000004" stroke-linecap="round"></path> <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="#eb2222" stroke-width="1.9200000000000004" stroke-linecap="round"></path> </g></svg>`;
+        isReading = true;
+      } else {
+        window.speechSynthesis.cancel(); // TTS 중지
+        ttsButton.innerHTML = `<svg width="24px" height="24px" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#2272eb"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <circle cx="10" cy="6" r="4" stroke="#2272eb" stroke-width="1.9200000000000004"></circle> <path d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="#2272eb" stroke-width="1.9200000000000004"></path> <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="#2272eb" stroke-width="1.9200000000000004" stroke-linecap="round"></path> <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="#2272eb" stroke-width="1.9200000000000004" stroke-linecap="round"></path> </g></svg>`;
+        isReading = false;
+      }
+    });
+
+    // 읽기 완료 시 이벤트
+    utterance && utterance.addEventListener('end', function () {
+      ttsButton.innerHTML = `<svg width="24px" height="24px" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#2272eb"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.048"></g><g id="SVGRepo_iconCarrier"> <circle cx="10" cy="6" r="4" stroke="#2272eb" stroke-width="1.9200000000000004"></circle> <path d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="#2272eb" stroke-width="1.9200000000000004"></path> <path d="M19 2C19 2 21 3.2 21 6C21 8.8 19 10 19 10" stroke="#2272eb" stroke-width="1.9200000000000004" stroke-linecap="round"></path> <path d="M17 4C17 4 18 4.6 18 6C18 7.4 17 8 17 8" stroke="#2272eb" stroke-width="1.9200000000000004" stroke-linecap="round"></path> </g></svg>`;
+      isReading = false;
+    });
+  });
+</script>
+</head>
+<body>
+  <header class="header">
+    Univ.01
+  </header>
+  <h1 class="main-title">면접 영상 대본 초안</h1>
+  <div class="author">by 신지성</div>
+  
+  <div class="content">
+    <div class="image-wrapper">
+      <img src="https://www.seowon.ac.kr/sites/seowon/images/apple-touch-icon.png" alt="서원대학교 로고">
+    </div>
+
+  <h2>안녕하십니까. 수험번호 1111054 신지성 입니다.</h2>
+  <h2>1번 문항에 대해 답변 드리겠습니다.</h2>
+    <p>저는 어릴 때부터 국어 시간에 문학 작품을 분석하면서 사람들의 생각과 감정을 표현하는 언어의 힘에 관심을 가졌습니다. 특히 문학을 통해 다양한 삶의 모습을 이해하고, 다른 사람의 입장을 공감하는 능력을 키울 수 있었습니다. 이러한 경험들은 저에게 국어교사가 되어 학생들에게 언어의 아름다움과 소통의 중요성을 가르쳐야겠다는 꿈을 심어주었습니다. 서원대학교는 오랜 전통을 가진 사범대학교로, 학생들의 역량을 기르는데 효과적인 교육과정이 돋보였습니다. 또한 교수님들이 적극적으로 진로 상담을 지원해주시며, 국어교육과에 다양한 소통 프로그램이 있어, 저의 꿈을 실현하기에 가장 적합한 대학교라고 생각했습니다. 그래서 저는 서원대학교 국어교육과에 지원하게 되었습니다.</p>
+    
+    <h2>다음은 3번 문항에 대해 답변 드리겠습니다.</h2>
+    <p>저를 가장 잘 나타내는 재능은 '타인의 이야기를 잘 듣고 공감하는 능력', '리더십', 그리고 '창의적인 문제 해결 능력'입니다. 저는 주변 사람들의 고민을 잘 들어주고, 그들의 입장에서 생각하며 조언하는 것을 좋아합니다. 저는 고등학교에서 팀 프로젝트와 모임에서 리더 역할을 맡은 경험이 많습니다. 팀원들의 의견을 조율하고, 목표를 달성하기 위해 모두가 협력할 수 있는 환경을 조성하는 데 강점을 가지고 있습니다. 또한, 창의적인 문제 해결을 통해 팀이 직면한 어려움을 효과적으로 극복하는 데 도움을 줄 수 있습니다. 이 재능은 교사로서 학생들의 어려움을 이해하고, 그들의 필요에 맞는 도움을 줄 수 있는 중요한 자질이라고 생각합니다. 반면, 저에게 더 필요하다고 느끼는 재능은 '융통성과 유연성'입니다. 이를 개선하기 위해 상황에 맞게 융통성 있게 대처하고, 유연한 마음가짐을 가지고 이를 통해 역량을 갖춘 교사가 되고자 노력하고 있습니다.</p>
+    
+       <h2>이상 수험번호 1111054 답변을 모두 마치겠습니다. 감사합니다.</h2>
+    
+  </div>
+
+  <!-- 푸터 추가 -->
+  <div class="footer">
+    <a href="https://chzzk.naver.com/c68c3e1788d86ff11740edcd7040a8e8" target="_blank"><img src="https://ssl.pstatic.net/static/nng/glive/icon/favicon.png" alt="Chzzk" style="width: 24px; height: 24px;"></a>
+    <a href="https://jisungeda55.github.io/redirect/YouTube/" target="_blank"><img src="https://www.gstatic.com/youtube/img/branding/favicon/favicon_192x192_v2.png" alt="YouTube" style="width: 24px; height: 24px;"></a>
+    <p class="footer-text">© 2024 SHIN JISUNG | All Rights Reserved</p>
+  </div>  
+</body>
+</html>
