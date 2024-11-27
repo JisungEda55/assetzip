@@ -1,0 +1,19 @@
+@import url(https://www.hyundai.com/jp/fonts/HyundaiSansHeadJPOTF-Regular/woff2/HyundaiSansHeadJPOTF-Regular.css);
+@import url(https://www.hyundai.com/jp/fonts/HyundaiSansHeadJPOTF-Medium/woff2/HyundaiSansHeadJPOTF-Medium.css);
+@import url(https://www.hyundai.com/jp/fonts/HyundaiSansTextJPOTF-Regular/woff2/HyundaiSansTextJPOTF-Regular.css);
+@font-face{font-family:"HyundaiSansHeadKR";
+src:url(https://www.hyundai.com/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRMedium.a71ba47.eot);
+src:url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRMedium.a71ba47.eot?#iefix) format("embedded-opentype"),
+url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRMedium.10da3b3.woff2) format("woff2"),url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRMedium.65040f9.woff) 
+format("woff"),url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRMedium.4eda80e.ttf) format("truetype");font-weight:400;font-style:normal}
+@font-face{font-family:"HyundaiSansTextKR";src:url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRMedium.49c1766.eot);
+src:url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRMedium.49c1766.eot?#iefix) format("embedded-opentype"),
+url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRMedium.9956f07.woff2) format("woff2"),url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRMedium.d89b50a.woff) format("woff"),
+url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRMedium.708fb29.ttf) format("truetype");font-weight:400;font-style:normal}@font-face{font-family:"HyundaiSansHeadKRR";
+src:url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRRegular.0b86b03.eot);src:url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRRegular.0b86b03.eot?#iefix) format("embedded-opentype"),
+url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRRegular.6b636ef.woff2) format("woff2"),url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRRegular.a337312.woff) format("woff"),
+url(/kr/ko/e/_nuxt/fonts/HyundaiSansHeadKRRegular.a16d1ec.ttf) format("truetype");font-weight:400;font-style:normal}
+@font-face{font-family:"HyundaiSansTextKRR";src:url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRRegular.07e2bd7.eot);
+src:url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRRegular.07e2bd7.eot?#iefix) format("embedded-opentype"),
+url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRRegular.e5673b8.woff2) format("woff2"),url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRRegular.f5afbfe.woff) format("woff"),
+url(/kr/ko/e/_nuxt/fonts/HyundaiSansTextKRRegular.00e0294.ttf) format("truetype")
