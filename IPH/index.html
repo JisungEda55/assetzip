@@ -414,6 +414,69 @@
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--widget-selected-border); /* Stronger shadow + outline when selected */
         }
 
+        /* --- Preview Modal Styles --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px); /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            margin: auto;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: calc(100vh - 120px); /* Adjust based on padding and close button */
+            height: auto;
+            border-radius: 12px;
+            display: block; /* Remove extra space below image */
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: var(--on-surface-variant);
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
         @media (max-width: 768px) {
             #app-container {
                 padding: 20px;
@@ -445,6 +508,14 @@
             }
             .rotator {
                 top: -20px;
+            }
+            .modal-content {
+                padding: 15px;
+            }
+            .close-button {
+                top: 10px;
+                right: 15px;
+                font-size: 24px;
             }
         }
     </style>
@@ -523,10 +594,22 @@
                     <button id="undoBtn" class="button-style tertiary-btn" title="Undo (Ctrl/Cmd+Z)"><span class="material-symbols-outlined">undo</span></button>
                     <button id="redoBtn" class="button-style tertiary-btn" title="Redo (Ctrl/Cmd+Y)"><span class="material-symbols-outlined">redo</span></button>
                 </div>
-                <button id="downloadWallpaper" class="button-style">
-                    <span class="material-symbols-outlined">download</span> Download Wallpaper
-                </button>
+                <div class="button-row">
+                    <button id="previewWallpaper" class="button-style secondary-btn">
+                        <span class="material-symbols-outlined">visibility</span> Preview Wallpaper
+                    </button>
+                    <button id="downloadWallpaper" class="button-style">
+                        <span class="material-symbols-outlined">download</span> Download Wallpaper
+                    </button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <button class="close-button material-symbols-outlined">close</button>
+            <img id="previewImage" src="" alt="Generated Wallpaper Preview">
         </div>
     </div>
 
@@ -535,6 +618,7 @@
         const ctx = canvas.getContext('2d');
         const imageUpload = document.getElementById('imageUpload');
         const downloadWallpaperBtn = document.getElementById('downloadWallpaper');
+        const previewWallpaperBtn = document.getElementById('previewWallpaper'); // New preview button
         const addTextWidgetBtn = document.getElementById('addTextWidget');
         const widgetTextInput = document.getElementById('widgetTextInput');
         const canvasContainer = document.getElementById('canvas-container');
@@ -558,6 +642,11 @@
         const redoBtn = document.getElementById('redoBtn');
         const gridSizeInput = document.getElementById('gridSizeInput');
         const gridSizeValueSpan = document.getElementById('gridSizeValue');
+
+        const previewModal = document.getElementById('previewModal'); // Preview modal element
+        const previewImage = document.getElementById('previewImage');   // Image inside preview modal
+        const closeModalBtn = previewModal.querySelector('.close-button'); // Close button for modal
+
 
         // iPhone 16 Pro Max Native Resolution
         const NATIVE_WIDTH = 1320; // in pixels
@@ -899,6 +988,35 @@
             document.body.removeChild(a);
         });
 
+        // --- Preview Wallpaper Button ---
+        previewWallpaperBtn.addEventListener('click', async () => {
+            if (activeItem) {
+                activeItem.classList.remove('selected');
+            }
+            activeItem = null;
+
+            await drawFinalCanvas(); // Render the current state to the off-screen canvas
+
+            const dataURL = canvas.toDataURL('image/png');
+            previewImage.src = dataURL; // Set the image source for the modal
+            previewModal.style.display = 'flex'; // Show the modal (CSS will center it)
+        });
+
+        // Close preview modal when clicking the close button
+        closeModalBtn.addEventListener('click', () => {
+            previewModal.style.display = 'none'; // Hide the modal
+            previewImage.src = ''; // Clear image src
+        });
+
+        // Close preview modal when clicking outside the content
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) {
+                previewModal.style.display = 'none';
+                previewImage.src = '';
+            }
+        });
+
+
         // Background Color Selection
         colorPresets.addEventListener('click', (e) => {
             if (e.target.classList.contains('color-box')) {
@@ -1176,7 +1294,7 @@
                 
                 // Determine if it's a touch event or mouse event
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const clientY = e.touches ? e.touches[0].clientY : e.touches[0].clientY;
 
                 selectItem(element); 
 
@@ -1388,10 +1506,12 @@
 
         // Deselect item if click outside canvas container or control panel
         document.addEventListener('mousedown', (e) => {
+            // Check if the click is outside canvasContainer, controls, AND the preview modal
             if (activeItem && 
                 !activeItem.contains(e.target) && 
                 !canvasContainer.contains(e.target) && 
-                !e.target.closest('.controls')) { 
+                !e.target.closest('.controls') &&
+                !previewModal.contains(e.target)) { 
                 activeItem.classList.remove('selected');
                 activeItem = null;
                 updateWidgetControls(); // Disable controls when nothing is selected
