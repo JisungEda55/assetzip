@@ -191,6 +191,12 @@
         .button-style.tertiary-btn:hover {
             background-color: color-mix(in srgb, var(--tertiary) 90%, black);
         }
+        .button-style:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
         .button-row {
             display: flex;
@@ -314,7 +320,7 @@
 
         .movable-item.selected {
             outline: 2px solid var(--widget-selected-border);
-            z-index: 100; /* Bring selected item to front */
+            z-index: 1000; /* Bring selected item to front, higher than other elements' z-index */
         }
 
         .resizer {
@@ -365,6 +371,12 @@
             object-fit: cover;
             object-position: center;
             display: block;
+            border-radius: 16px; /* Match Material 3 rounded corners */
+        }
+        .movable-item.image-preview-wrapper {
+             /* Ensure image wrapper has rounded corners for effect */
+            border-radius: 16px; 
+            overflow: hidden; /* Clip image content to rounded corners */
         }
 
         /* Material 3 inspired widget style */
@@ -445,14 +457,14 @@
 
         <div class="controls">
             <div class="control-group">
-                <h3><span class="material-symbols-outlined">palette</span> Background</h3>
+                <h3><span class="material-symbols-outlined">palette</span> Background & Images</h3>
                 <label for="imageUpload" class="button-style">
-                    <span class="material-symbols-outlined">image</span> Upload Image
+                    <span class="material-symbols-outlined">add_photo_alternate</span> Add Image (Max 4)
                 </label>
-                <input type="file" id="imageUpload" accept="image/*">
+                <input type="file" id="imageUpload" accept="image/*" multiple>
 
                 <div>
-                    <strong>Choose Color:</strong>
+                    <strong>Choose Background Color:</strong>
                     <div id="color-presets">
                         <div class="color-box" data-color="#ADD8E6" style="background-color: #ADD8E6;" title="Light Blue"></div>
                         <div class="color-box" data-color="#FFD1DC" style="background-color: #FFD1DC;" title="Light Pink"></div>
@@ -461,6 +473,10 @@
                         <div class="color-box" data-color="#FFFFB3" style="background-color: #FFFFB3;" title="Light Yellow"></div>
                         <input type="color" id="customBackgroundColor" value="#ADD8E6" title="Custom Color">
                     </div>
+                </div>
+                <div class="button-row">
+                    <button id="flipHorizontalBtn" class="button-style tertiary-btn" title="Flip Horizontal (Image Only)"><span class="material-symbols-outlined">flip</span></button>
+                    <button id="flipVerticalBtn" class="button-style tertiary-btn" title="Flip Vertical (Image Only)"><span class="material-symbols-outlined" style="transform: rotate(90deg);">flip</span></button>
                 </div>
             </div>
 
@@ -474,6 +490,8 @@
                     <button id="boldTextBtn" class="button-style tertiary-btn" title="Bold (B)"><span class="material-symbols-outlined">format_bold</span></button>
                     <button id="italicTextBtn" class="button-style tertiary-btn" title="Italic (I)"><span class="material-symbols-outlined">format_italic</span></button>
                     <button id="underlineTextBtn" class="button-style tertiary-btn" title="Underline (U)"><span class="material-symbols-outlined">format_underline</span></button>
+                </div>
+                <div class="button-row">
                     <button id="alignLeftBtn" class="button-style tertiary-btn" title="Align Left"><span class="material-symbols-outlined">format_align_left</span></button>
                     <button id="alignCenterBtn" class="button-style tertiary-btn" title="Align Center"><span class="material-symbols-outlined">format_align_center</span></button>
                     <button id="alignRightBtn" class="button-style tertiary-btn" title="Align Right"><span class="material-symbols-outlined">format_align_right</span></button>
@@ -496,18 +514,14 @@
                     <button id="duplicateBtn" class="button-style tertiary-btn" title="Duplicate"><span class="material-symbols-outlined">content_copy</span></button>
                     <button id="deleteBtn" class="button-style tertiary-btn" title="Delete (Del/Backspace)"><span class="material-symbols-outlined">delete</span></button>
                 </div>
-                <div class="button-row">
-                    <button id="flipHorizontalBtn" class="button-style tertiary-btn" title="Flip Horizontal"><span class="material-symbols-outlined">flip</span></button>
-                    <button id="flipVerticalBtn" class="button-style tertiary-btn" title="Flip Vertical"><span class="material-symbols-outlined" style="transform: rotate(90deg);">flip</span></button>
-                </div>
-                <div class="button-row">
-                    <button id="undoBtn" class="button-style tertiary-btn" title="Undo (Ctrl/Cmd+Z)"><span class="material-symbols-outlined">undo</span></button>
-                    <button id="redoBtn" class="button-style tertiary-btn" title="Redo (Ctrl/Cmd+Y)"><span class="material-symbols-outlined">redo</span></button>
-                </div>
                 <div>
                     <strong>Grid Snapping:</strong>
                     <input type="range" id="gridSizeInput" min="0" max="50" step="5" value="20" title="Grid Size (0 for Off)">
                     <label style="font-size: 0.9em; margin-top: 5px;">Grid Size: <span id="gridSizeValue">20px</span> (0 = Off)</label>
+                </div>
+                <div class="button-row">
+                    <button id="undoBtn" class="button-style tertiary-btn" title="Undo (Ctrl/Cmd+Z)"><span class="material-symbols-outlined">undo</span></button>
+                    <button id="redoBtn" class="button-style tertiary-btn" title="Redo (Ctrl/Cmd+Y)"><span class="material-symbols-outlined">redo</span></button>
                 </div>
                 <button id="downloadWallpaper" class="button-style">
                     <span class="material-symbols-outlined">download</span> Download Wallpaper
@@ -569,6 +583,9 @@
         let history = [];
         let historyPointer = -1;
 
+        // Max images allowed
+        const MAX_IMAGES = 4;
+
         // --- Utility Functions ---
 
         // Function to clamp a value between a min and max
@@ -604,7 +621,10 @@
                 const itemData = {
                     id: item.id,
                     type: item.dataset.type,
-                    html: item.outerHTML, // Save the full HTML for easy restoration
+                    // Save the innerHTML for widgets to preserve text and style classes
+                    // For images, only need the src and base properties
+                    htmlContent: item.dataset.type === 'widget' ? item.innerHTML : null, 
+                    src: item.dataset.type === 'image' ? item.querySelector('.image-preview').src : null, // Save image src
                     style: {
                         left: item.style.left,
                         top: item.style.top,
@@ -623,7 +643,8 @@
                         justifyContent: item.style.justifyContent, // For flex alignment
                         opacity: item.style.opacity || '1' // Save opacity
                     },
-                    textContent: item.textContent // For widgets
+                    classList: Array.from(item.classList), // Save classes for styling
+                    textContent: item.textContent // For widgets, to ensure text content is accurate
                 };
                 state.push(itemData);
             });
@@ -660,20 +681,56 @@
 
             // Restore items
             state.items.forEach(itemData => {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = itemData.html;
-                const restoredItem = tempDiv.firstElementChild; // Get the actual element
+                let restoredItem;
+                if (itemData.type === 'image') {
+                    restoredItem = document.createElement('div');
+                    restoredItem.className = 'movable-item image-preview-wrapper';
+                    restoredItem.id = itemData.id;
+                    restoredItem.dataset.type = 'image';
 
-                // Re-apply specific styles if outerHTML didn't fully capture dynamic ones
+                    const imgElement = new Image(); // Use new Image() for proper loading
+                    imgElement.src = itemData.src;
+                    imgElement.className = 'image-preview';
+                    
+                    const resizer = document.createElement('div');
+                    resizer.className = 'resizer';
+                    const rotator = document.createElement('div');
+                    rotator.className = 'rotator';
+
+                    restoredItem.appendChild(imgElement);
+                    restoredItem.appendChild(resizer);
+                    restoredItem.appendChild(rotator);
+                } else if (itemData.type === 'widget') {
+                    restoredItem = document.createElement('div');
+                    restoredItem.className = 'movable-item widget-box';
+                    restoredItem.id = itemData.id;
+                    restoredItem.dataset.type = 'widget';
+                    restoredItem.innerHTML = itemData.htmlContent; // Restore innerHTML including resizer/rotator if present
+                }
+                
+                // Restore classes
+                restoredItem.classList = itemData.classList.join(' ');
+                
+                // Re-apply specific styles
                 for (const prop in itemData.style) {
                     if (itemData.style[prop]) {
                         restoredItem.style[prop] = itemData.style[prop];
                     }
                 }
-                
-                // Ensure correct text content for widgets as it might change
+                // Ensure text content is correct for widgets
                 if (itemData.type === 'widget') {
-                    restoredItem.textContent = itemData.textContent;
+                    restoredItem.textContent = itemData.textContent; // Overwrite innerHTML text if needed
+                    // Re-add resizer and rotator if they were part of innerHTML for new widget
+                    if (!restoredItem.querySelector('.resizer')) {
+                        const resizer = document.createElement('div');
+                        resizer.className = 'resizer';
+                        restoredItem.appendChild(resizer);
+                    }
+                     if (!restoredItem.querySelector('.rotator')) {
+                        const rotator = document.createElement('div');
+                        rotator.className = 'rotator';
+                        restoredItem.appendChild(rotator);
+                    }
                 }
 
                 canvasContainer.appendChild(restoredItem);
@@ -685,6 +742,7 @@
             });
 
             updateUndoRedoButtons();
+            updateImageUploadButton(); // Update button state after restore
             // console.log("State restored to:", historyPointer);
         }
 
@@ -693,57 +751,74 @@
             redoBtn.disabled = historyPointer >= history.length - 1;
         }
 
+        function updateImageUploadButton() {
+            const currentImagesCount = canvasContainer.querySelectorAll('.image-preview-wrapper').length;
+            imageUpload.disabled = currentImagesCount >= MAX_IMAGES;
+            imageUpload.parentElement.style.opacity = imageUpload.disabled ? '0.6' : '1';
+            imageUpload.parentElement.style.cursor = imageUpload.disabled ? 'not-allowed' : 'pointer';
+        }
+
         // --- Event Listeners ---
 
         // Image Upload
         imageUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
+            const files = Array.from(event.target.files);
+            const currentImagesCount = canvasContainer.querySelectorAll('.image-preview-wrapper').length;
+            const filesToAdd = files.slice(0, MAX_IMAGES - currentImagesCount);
+
+            if (filesToAdd.length === 0 && files.length > 0) {
+                alert(`You can only add up to ${MAX_IMAGES} images.`);
+                return;
+            }
+
+            filesToAdd.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const img = new Image();
                     img.onload = () => {
-                        // Remove any existing image wrapper to ensure only one background image
-                        const existingImageWrapper = canvasContainer.querySelector('.image-preview-wrapper');
-                        if (existingImageWrapper) {
-                            canvasContainer.removeChild(existingImageWrapper);
-                        }
-
                         const imgWrapper = document.createElement('div');
                         imgWrapper.className = 'movable-item image-preview-wrapper';
                         imgWrapper.id = `item-${Date.now()}`; // Unique ID for history
                         imgWrapper.dataset.type = 'image';
+                        imgWrapper.style.zIndex = '1'; // Keep images behind new widgets by default (can be changed by user)
 
-                        // Set initial size and position to cover the canvas container
-                        imgWrapper.style.width = '100%';
-                        imgWrapper.style.height = '100%';
-                        imgWrapper.style.left = '0';
-                        imgWrapper.style.top = '0';
-                        imgWrapper.style.zIndex = '1'; // Keep background image behind widgets
+                        // Set initial size and position (e.g., a reasonable default)
+                        const containerRect = canvasContainer.getBoundingClientRect();
+                        const defaultImgWidth = Math.min(img.naturalWidth, containerRect.width * 0.6);
+                        const defaultImgHeight = (img.naturalHeight / img.naturalWidth) * defaultImgWidth;
+                        
+                        const initialLeft = (containerRect.width / 2) - (defaultImgWidth / 2);
+                        const initialTop = (containerRect.height / 2) - (defaultImgHeight / 2);
 
+                        imgWrapper.style.width = `${defaultImgWidth}px`;
+                        imgWrapper.style.height = `${defaultImgHeight}px`;
+                        imgWrapper.style.left = `${initialLeft}px`;
+                        imgWrapper.style.top = `${initialTop}px`;
+                        
                         const imgElement = document.createElement('img');
                         imgElement.src = e.target.result;
                         imgElement.className = 'image-preview';
                         
                         const resizer = document.createElement('div');
                         resizer.className = 'resizer';
-
                         const rotator = document.createElement('div');
                         rotator.className = 'rotator';
 
                         imgWrapper.appendChild(imgElement);
                         imgWrapper.appendChild(resizer);
-                        imgWrapper.appendChild(rotator); // Add rotator
+                        imgWrapper.appendChild(rotator);
                         canvasContainer.appendChild(imgWrapper);
 
                         makeDraggableAndResizable(imgWrapper);
-                        selectItem(imgWrapper); // Auto-select new image for immediate interaction
+                        selectItem(imgWrapper); 
                         saveState();
+                        updateImageUploadButton();
                     };
                     img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
-            }
+            });
+            event.target.value = ''; // Clear file input to allow re-uploading same files
         });
 
         // Add Text Widget
@@ -758,7 +833,22 @@
                 newWidget.style.zIndex = '2'; // Widgets above background image
                 newWidget.style.backgroundColor = widgetBgOpacityInput.value ? `rgba(0, 0, 0, ${widgetBgOpacityInput.value})` : 'rgba(0,0,0,0.6)';
                 newWidget.style.color = widgetTextColorInput.value || '#ffffff';
-                newWidget.style.fontFamily = 'SBAggroB, sans-serif'; // Ensure font is set
+                newWidget.style.fontFamily = 'SBAggroB, sans-serif'; 
+                newWidget.style.fontWeight = boldTextBtn.classList.contains('filled') ? '700' : '500';
+                newWidget.style.fontStyle = italicTextBtn.classList.contains('filled') ? 'italic' : 'normal';
+                newWidget.style.textDecoration = underlineTextBtn.classList.contains('filled') ? 'underline' : 'none';
+                
+                // Set initial text alignment based on current button states
+                if (alignLeftBtn.classList.contains('filled')) {
+                    newWidget.style.textAlign = 'left';
+                    newWidget.style.justifyContent = 'flex-start';
+                } else if (alignRightBtn.classList.contains('filled')) {
+                    newWidget.style.textAlign = 'right';
+                    newWidget.style.justifyContent = 'flex-end';
+                } else { // Default to center
+                    newWidget.style.textAlign = 'center';
+                    newWidget.style.justifyContent = 'center';
+                }
 
                 // Set initial position (e.g., center of the canvas container display)
                 const containerRect = canvasContainer.getBoundingClientRect();
@@ -783,14 +873,14 @@
                 canvasContainer.appendChild(newWidget);
 
                 makeDraggableAndResizable(newWidget);
-                selectItem(newWidget); // Auto-select new widget
+                selectItem(newWidget); 
                 widgetTextInput.value = ''; // Clear input
                 saveState();
             }
         });
 
         // Download Wallpaper
-        downloadWallpaperBtn.addEventListener('click', () => {
+        downloadWallpaperBtn.addEventListener('click', async () => {
             // Unselect any active item visually before rendering to canvas
             if (activeItem) {
                 activeItem.classList.remove('selected');
@@ -798,7 +888,7 @@
             activeItem = null; // Clear active item
 
             // Draw all current items to the off-screen canvas
-            drawFinalCanvas();
+            await drawFinalCanvas(); // Wait for drawing to complete
 
             const dataURL = canvas.toDataURL('image/png');
             const a = document.createElement('a');
@@ -818,7 +908,7 @@
                 const selectedColor = e.target.dataset.color;
                 setBackgroundColor(selectedColor);
                 customBackgroundColorInput.value = selectedColor;
-                updateUIColors(selectedColor); // Update UI colors
+                updateUIColors(selectedColor); 
                 saveState();
             }
         });
@@ -826,7 +916,7 @@
         customBackgroundColorInput.addEventListener('input', (e) => {
             document.querySelectorAll('.color-box').forEach(box => box.classList.remove('selected'));
             setBackgroundColor(e.target.value);
-            updateUIColors(e.target.value); // Update UI colors
+            updateUIColors(e.target.value); 
             saveState();
         });
 
@@ -840,6 +930,7 @@
             if (activeItem && activeItem.dataset.type === 'widget') {
                 activeItem.classList.toggle('bold');
                 activeItem.style.fontWeight = activeItem.classList.contains('bold') ? '700' : '500';
+                boldTextBtn.classList.toggle('filled', activeItem.classList.contains('bold'));
                 saveState();
             }
         });
@@ -847,6 +938,7 @@
             if (activeItem && activeItem.dataset.type === 'widget') {
                 activeItem.classList.toggle('italic');
                 activeItem.style.fontStyle = activeItem.classList.contains('italic') ? 'italic' : 'normal';
+                italicTextBtn.classList.toggle('filled', activeItem.classList.contains('italic'));
                 saveState();
             }
         });
@@ -854,6 +946,7 @@
             if (activeItem && activeItem.dataset.type === 'widget') {
                 activeItem.classList.toggle('underline');
                 activeItem.style.textDecoration = activeItem.classList.contains('underline') ? 'underline' : 'none';
+                underlineTextBtn.classList.toggle('filled', activeItem.classList.contains('underline'));
                 saveState();
             }
         });
@@ -863,6 +956,7 @@
                 activeItem.classList.add('align-left');
                 activeItem.style.textAlign = 'left';
                 activeItem.style.justifyContent = 'flex-start';
+                updateAlignButtonsState();
                 saveState();
             }
         });
@@ -872,6 +966,7 @@
                 activeItem.classList.add('align-center');
                 activeItem.style.textAlign = 'center';
                 activeItem.style.justifyContent = 'center';
+                updateAlignButtonsState();
                 saveState();
             }
         });
@@ -881,6 +976,7 @@
                 activeItem.classList.add('align-right');
                 activeItem.style.textAlign = 'right';
                 activeItem.style.justifyContent = 'flex-end';
+                updateAlignButtonsState();
                 saveState();
             }
         });
@@ -894,12 +990,12 @@
 
         widgetBgOpacityInput.addEventListener('input', (e) => {
             if (activeItem && activeItem.dataset.type === 'widget') {
-                const hexColor = activeItem.style.backgroundColor.match(/rgb(a)?\((\d+),\s*(\d+),\s*(\d+)(,\s*\d+\.\d+)?\)/);
-                if (hexColor) {
-                    activeItem.style.backgroundColor = `rgba(${hexColor[2]}, ${hexColor[3]}, ${hexColor[4]}, ${e.target.value})`;
+                const currentBgColor = window.getComputedStyle(activeItem).backgroundColor;
+                const match = currentBgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*(\d*\.?\d+))?\)/);
+                if (match) {
+                    activeItem.style.backgroundColor = `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${e.target.value})`;
                 } else {
-                    // Fallback for initial state or if color is not rgba
-                    activeItem.style.backgroundColor = `rgba(0,0,0,${e.target.value})`;
+                    activeItem.style.backgroundColor = `rgba(0,0,0,${e.target.value})`; // Fallback
                 }
                 saveState();
             }
@@ -908,28 +1004,46 @@
         // Layering controls
         bringForwardBtn.addEventListener('click', () => {
             if (activeItem) {
-                const currentZ = parseInt(activeItem.style.zIndex) || 0;
                 const items = Array.from(canvasContainer.querySelectorAll('.movable-item'));
-                // Find next available Z-index above current
-                let maxZ = 0;
-                items.forEach(item => {
-                    maxZ = Math.max(maxZ, parseInt(item.style.zIndex) || 0);
-                });
-                activeItem.style.zIndex = Math.min(currentZ + 1, maxZ + 10); // Increment, but not exceeding max by too much
+                let currentZ = parseInt(activeItem.style.zIndex) || 0;
+                let newZ = currentZ;
+
+                // Find all items with z-index greater than current and sort them
+                const higherItems = items
+                    .filter(item => (parseInt(item.style.zIndex) || 0) > currentZ && item !== activeItem)
+                    .sort((a, b) => (parseInt(a.style.zIndex) || 0) - (parseInt(b.style.zIndex) || 0));
+
+                if (higherItems.length > 0) {
+                    // Move just above the lowest item that is higher than current
+                    newZ = parseInt(higherItems[0].style.zIndex) || 0;
+                } else {
+                    // If no higher items, bring to front by setting a very high z-index
+                    newZ = Math.max(...items.map(item => parseInt(item.style.zIndex) || 0)) + 1;
+                }
+                activeItem.style.zIndex = newZ;
                 saveState();
             }
         });
 
         sendBackwardBtn.addEventListener('click', () => {
             if (activeItem) {
-                const currentZ = parseInt(activeItem.style.zIndex) || 0;
                 const items = Array.from(canvasContainer.querySelectorAll('.movable-item'));
-                // Find min available Z-index below current
-                let minZ = Infinity;
-                items.forEach(item => {
-                    minZ = Math.min(minZ, parseInt(item.style.zIndex) || 0);
-                });
-                activeItem.style.zIndex = Math.max(currentZ - 1, minZ - 10); // Decrement, but not below min by too much
+                let currentZ = parseInt(activeItem.style.zIndex) || 0;
+                let newZ = currentZ;
+
+                // Find all items with z-index less than current and sort them
+                const lowerItems = items
+                    .filter(item => (parseInt(item.style.zIndex) || 0) < currentZ && item !== activeItem)
+                    .sort((a, b) => (parseInt(b.style.zIndex) || 0) - (parseInt(a.style.zIndex) || 0)); // Sort descending
+
+                if (lowerItems.length > 0) {
+                    // Move just below the highest item that is lower than current
+                    newZ = parseInt(lowerItems[0].style.zIndex) || 0;
+                } else {
+                    // If no lower items, send to back by setting a very low z-index
+                    newZ = Math.min(...items.map(item => parseInt(item.style.zIndex) || 0)) - 1;
+                }
+                activeItem.style.zIndex = newZ;
                 saveState();
             }
         });
@@ -941,10 +1055,11 @@
                 clonedItem.id = `item-${Date.now()}`; // New unique ID
                 
                 // Adjust position slightly to show it's a duplicate
-                const currentLeft = parseFloat(clonedItem.style.left);
-                const currentTop = parseFloat(clonedItem.style.top);
+                const currentLeft = parseFloat(activeItem.style.left);
+                const currentTop = parseFloat(activeItem.style.top);
                 clonedItem.style.left = `${currentLeft + 15}px`;
                 clonedItem.style.top = `${currentTop + 15}px`;
+                clonedItem.style.zIndex = (parseInt(activeItem.style.zIndex) || 0) + 1; // Bring duplicate slightly forward
 
                 // Reset selection for the new clone
                 clonedItem.classList.remove('selected');
@@ -954,6 +1069,7 @@
                 canvasContainer.appendChild(clonedItem);
                 selectItem(clonedItem); // Select the new duplicated item
                 saveState();
+                updateImageUploadButton(); // Update if an image was duplicated
             }
         });
 
@@ -963,6 +1079,7 @@
                 canvasContainer.removeChild(activeItem);
                 activeItem = null;
                 saveState();
+                updateImageUploadButton(); // Update if an image was deleted
             }
         });
 
@@ -970,11 +1087,20 @@
         flipHorizontalBtn.addEventListener('click', () => {
             if (activeItem && activeItem.dataset.type === 'image') {
                 const currentTransform = activeItem.style.transform || '';
-                if (currentTransform.includes('scaleX(-1)')) {
-                    activeItem.style.transform = currentTransform.replace('scaleX(-1)', '');
+                const matrix = new DOMMatrixReadOnly(currentTransform);
+                let newScaleX = matrix.m11;
+
+                if (newScaleX < 0) { // Already flipped horizontally
+                    newScaleX = 1;
                 } else {
-                    activeItem.style.transform += ' scaleX(-1)';
+                    newScaleX = -1;
                 }
+                
+                // Reconstruct transform string, preserving rotation
+                let rotationMatch = currentTransform.match(/rotate\(([-]?\d*\.?\d*)deg\)/);
+                let rotation = rotationMatch ? parseFloat(rotationMatch[1]) : 0;
+                
+                activeItem.style.transform = `scale(${newScaleX}, ${matrix.m22}) rotate(${rotation}deg)`;
                 saveState();
             }
         });
@@ -982,11 +1108,20 @@
         flipVerticalBtn.addEventListener('click', () => {
             if (activeItem && activeItem.dataset.type === 'image') {
                 const currentTransform = activeItem.style.transform || '';
-                if (currentTransform.includes('scaleY(-1)')) {
-                    activeItem.style.transform = currentTransform.replace('scaleY(-1)', '');
+                const matrix = new DOMMatrixReadOnly(currentTransform);
+                let newScaleY = matrix.m22;
+
+                if (newScaleY < 0) { // Already flipped vertically
+                    newScaleY = 1;
                 } else {
-                    activeItem.style.transform += ' scaleY(-1)';
+                    newScaleY = -1;
                 }
+
+                // Reconstruct transform string, preserving rotation
+                let rotationMatch = currentTransform.match(/rotate\(([-]?\d*\.?\d*)deg\)/);
+                let rotation = rotationMatch ? parseFloat(rotationMatch[1]) : 0;
+                
+                activeItem.style.transform = `scale(${matrix.m11}, ${newScaleY}) rotate(${rotation}deg)`;
                 saveState();
             }
         });
@@ -1003,6 +1138,7 @@
                     canvasContainer.removeChild(activeItem);
                     activeItem = null;
                     saveState();
+                    updateImageUploadButton();
                 }
             } else if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
                 e.preventDefault();
@@ -1053,11 +1189,13 @@
                 initialItemWidth = rect.width;
                 initialItemHeight = rect.height;
                 
-                // Get current rotation from transform style
-                const transformMatch = element.style.transform.match(/rotate\(([-]?\d*\.?\d*)deg\)/);
-                initialItemRotation = transformMatch ? parseFloat(transformMatch[1]) : 0;
-
-                // Calculate rotation origin (center of the element)
+                // Get current transform matrix for rotation and scaling
+                const computedTransform = window.getComputedStyle(element).transform;
+                const matrix = new DOMMatrixReadOnly(computedTransform);
+                
+                initialItemRotation = Math.atan2(matrix.b, matrix.a) * (180 / Math.PI);
+                
+                // Calculate rotation origin (center of the element relative to the document)
                 rotationOriginX = rect.left + rect.width / 2;
                 rotationOriginY = rect.top + rect.height / 2;
 
@@ -1067,7 +1205,7 @@
                     element.style.cursor = 'se-resize';
                 } else if (e.target === rotator) {
                     isRotating = true;
-                    element.style.cursor = 'crosshair'; // Visual cue for rotation
+                    element.style.cursor = 'crosshair'; 
                 } else {
                     isDragging = true;
                     element.style.cursor = 'grabbing';
@@ -1134,16 +1272,15 @@
                     activeItem.style.height = `${newHeight}px`;
 
                     if (activeItem.dataset.type === 'widget') {
-                        // Calculate new font size based on current computed style's pixel size
                         const currentCssFontSizePx = parseFloat(window.getComputedStyle(activeItem).fontSize);
-                        const defaultWidgetWidth = 180; // Reference from initial creation
+                        const defaultWidgetWidth = 180; 
                         const defaultWidgetHeight = 60; 
                         
                         const widthRatio = newWidth / defaultWidgetWidth;
                         const heightRatio = newHeight / defaultWidgetHeight;
                         const scaleFactor = Math.min(widthRatio, heightRatio); 
 
-                        const effectiveBaseFontSize = currentCssFontSizePx || 17; // Default for first resize
+                        const effectiveBaseFontSize = currentCssFontSizePx || 17; 
                         let newFontSize = effectiveBaseFontSize * scaleFactor;
                         newFontSize = clamp(newFontSize, 10, 50); 
                         activeItem.style.fontSize = `${newFontSize}px`;
@@ -1159,26 +1296,31 @@
                         newRotation = Math.round(newRotation / 45) * 45;
                     }
                     
-                    // Update the element's transform property
-                    // Ensure previous transforms (like scaleX/Y for flip) are preserved
-                    let currentTransform = activeItem.style.transform.replace(/rotate\(([-]?\d*\.?\d*)deg\)/, '').trim();
-                    activeItem.style.transform = `${currentTransform} rotate(${newRotation}deg)`;
+                    // Get current transform values excluding rotation
+                    const currentTransform = activeItem.style.transform || '';
+                    const matrix = new DOMMatrixReadOnly(currentTransform);
+                    let scaleX = matrix.m11 / Math.cos(initialItemRotation * Math.PI / 180); // Correctly extract scale even if rotated
+                    let scaleY = matrix.m22 / Math.cos(initialItemRotation * Math.PI / 180);
+
+                    // If scale values are very close to 0, default to 1 (e.g., if transform matrix is identity)
+                    if (Math.abs(scaleX) < 0.001) scaleX = 1;
+                    if (Math.abs(scaleY) < 0.001) scaleY = 1;
+
+
+                    activeItem.style.transform = `scale(${scaleX}, ${scaleY}) rotate(${newRotation}deg)`;
                 }
-                // Request animation frame for smooth updates
-                requestAnimationFrame(() => {
-                    // This callback doesn't need to do much as styles are already updated
-                });
+                requestAnimationFrame(() => {}); // Optimise updates
             };
 
             const endInteraction = () => {
                 if (isDragging || isResizing || isRotating) {
-                    saveState(); // Save state only after an interaction
+                    saveState(); 
                 }
                 isDragging = false;
                 isResizing = false;
                 isRotating = false;
                 if (activeItem) {
-                    activeItem.style.cursor = 'grab'; // Reset cursor
+                    activeItem.style.cursor = 'grab'; 
                 }
                 document.removeEventListener('mousemove', moveInteraction);
                 document.removeEventListener('mouseup', endInteraction);
@@ -1198,30 +1340,61 @@
             item.classList.add('selected');
             
             // Update widget styling controls based on selected item's current state
-            if (item && item.dataset.type === 'widget') {
-                boldTextBtn.classList.toggle('filled', item.classList.contains('bold'));
-                italicTextBtn.classList.toggle('filled', item.classList.contains('italic'));
-                underlineTextBtn.classList.toggle('filled', item.classList.contains('underline'));
+            updateWidgetControls();
+        }
 
-                alignLeftBtn.classList.toggle('filled', item.classList.contains('align-left') || item.style.textAlign === 'left');
-                alignCenterBtn.classList.toggle('filled', item.classList.contains('align-center') || item.style.textAlign === 'center');
-                alignRightBtn.classList.toggle('filled', item.classList.contains('align-right') || item.style.textAlign === 'right');
+        function updateWidgetControls() {
+            // Disable all text/style controls by default
+            const textControls = [boldTextBtn, italicTextBtn, underlineTextBtn, alignLeftBtn, alignCenterBtn, alignRightBtn, widgetTextColorInput, widgetBgOpacityInput];
+            textControls.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.remove('filled'); // Clear filled state
+            });
 
-                widgetTextColorInput.value = item.style.color || '#ffffff';
-                const bgColorMatch = item.style.backgroundColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)/);
-                widgetBgOpacityInput.value = bgColorMatch ? parseFloat(bgColorMatch[4]) : '0.6';
+            // Disable flip buttons by default
+            flipHorizontalBtn.disabled = true;
+            flipVerticalBtn.disabled = true;
+
+            if (activeItem) {
+                if (activeItem.dataset.type === 'widget') {
+                    textControls.forEach(btn => btn.disabled = false);
+                    
+                    boldTextBtn.classList.toggle('filled', activeItem.classList.contains('bold') || activeItem.style.fontWeight === '700');
+                    italicTextBtn.classList.toggle('filled', activeItem.classList.contains('italic') || activeItem.style.fontStyle === 'italic');
+                    underlineTextBtn.classList.toggle('filled', activeItem.classList.contains('underline') || activeItem.style.textDecoration === 'underline');
+                    
+                    updateAlignButtonsState();
+
+                    widgetTextColorInput.value = activeItem.style.color || '#ffffff';
+                    const bgColorMatch = window.getComputedStyle(activeItem).backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*(\d*\.?\d+))?\)/);
+                    widgetBgOpacityInput.value = bgColorMatch && bgColorMatch[5] !== undefined ? parseFloat(bgColorMatch[5]) : '0.6';
+
+                } else if (activeItem.dataset.type === 'image') {
+                    flipHorizontalBtn.disabled = false;
+                    flipVerticalBtn.disabled = false;
+                }
             }
         }
 
+        function updateAlignButtonsState() {
+            if (!activeItem || activeItem.dataset.type !== 'widget') return;
+            
+            const currentAlign = activeItem.style.textAlign || 'center'; // Default center
+            alignLeftBtn.classList.toggle('filled', currentAlign === 'left');
+            alignCenterBtn.classList.toggle('filled', currentAlign === 'center');
+            alignRightBtn.classList.toggle('filled', currentAlign === 'right');
+        }
+
+
         // Deselect item if click outside canvas container or control panel
         document.addEventListener('mousedown', (e) => {
-            // Check if the click target is NOT part of an active item, NOT part of the controls
             if (activeItem && 
                 !activeItem.contains(e.target) && 
-                !canvasContainer.contains(e.target) && // If clicked inside canvas but not on active item
-                !e.target.closest('.controls')) { // If clicked outside controls group
+                !canvasContainer.contains(e.target) && 
+                !e.target.closest('.controls')) { 
                 activeItem.classList.remove('selected');
                 activeItem = null;
+                updateWidgetControls(); // Disable controls when nothing is selected
             }
         });
 
@@ -1251,123 +1424,148 @@
             for (const item of items) {
                 const itemStyle = window.getComputedStyle(item);
 
-                const scaleX = NATIVE_WIDTH / containerRect.width;
-                const scaleY = NATIVE_HEIGHT / containerRect.height;
+                const scaleX_display_to_native = NATIVE_WIDTH / containerRect.width;
+                const scaleY_display_to_native = NATIVE_HEIGHT / containerRect.height;
 
-                // Use offsetLeft/Top for more direct position from parent
-                let drawX = item.offsetLeft * scaleX;
-                let drawY = item.offsetTop * scaleY;
-                let drawWidth = parseFloat(itemStyle.width) * scaleX;
-                let drawHeight = parseFloat(itemStyle.height) * scaleY;
+                let drawX_display = parseFloat(item.style.left);
+                let drawY_display = parseFloat(item.style.top);
+                let drawWidth_display = parseFloat(itemStyle.width);
+                let drawHeight_display = parseFloat(itemStyle.height);
 
-                // Get rotation from CSS transform
+                // Calculate native coordinates and dimensions
+                let drawX_native = drawX_display * scaleX_display_to_native;
+                let drawY_native = drawY_display * scaleY_display_to_native;
+                let drawWidth_native = drawWidth_display * scaleX_display_to_native;
+                let drawHeight_native = drawHeight_display * scaleY_display_to_native;
+
+                // Get rotation and scale from CSS transform matrix
                 const transform = itemStyle.transform;
-                let rotationAngle = 0;
-                let flipScaleX = 1;
-                let flipScaleY = 1;
+                let rotationAngle = 0; // in degrees
+                let currentScaleX = 1;
+                let currentScaleY = 1;
 
                 if (transform && transform !== 'none') {
                     const matrix = new DOMMatrixReadOnly(transform);
+                    // Extract rotation (in radians) and convert to degrees
                     rotationAngle = Math.atan2(matrix.b, matrix.a) * (180 / Math.PI);
-                    flipScaleX = matrix.m11 / Math.cos(rotationAngle * Math.PI / 180);
-                    flipScaleY = matrix.m22 / Math.cos(rotationAngle * Math.PI / 180);
+                    
+                    // Extract scale factors. Need to be careful if rotation is also present
+                    // Correct way to get scale components:
+                    currentScaleX = Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b);
+                    currentScaleY = Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d);
+                    
+                    // Account for potential negative scale (flips)
+                    if (matrix.a < 0 && matrix.b === 0) currentScaleX *= -1;
+                    if (matrix.d < 0 && matrix.c === 0) currentScaleY *= -1;
                 }
 
                 ctx.save(); // Save current canvas state
 
-                // Translate to the center of the item for rotation and then apply rotation
-                ctx.translate(drawX + drawWidth / 2, drawY + drawHeight / 2);
+                // Translate to the center of the item (on native canvas)
+                ctx.translate(drawX_native + drawWidth_native / 2, drawY_native + drawHeight_native / 2);
+                
+                // Apply rotation
                 ctx.rotate(rotationAngle * Math.PI / 180);
-                ctx.scale(flipScaleX, flipScaleY); // Apply flip if any
+                
+                // Apply scaling (for flip)
+                ctx.scale(currentScaleX, currentScaleY); 
 
-                // Translate back to draw position (relative to its own center now)
-                ctx.translate(-(drawX + drawWidth / 2), -(drawY + drawHeight / 2));
+                // Translate back to draw position (relative to its own center now, but scaled and rotated)
+                ctx.translate(-(drawX_native + drawWidth_native / 2), -(drawY_native + drawHeight_native / 2));
                 
                 if (item.dataset.type === 'image') {
                     const imgElement = item.querySelector('.image-preview');
                     if (imgElement && imgElement.naturalWidth > 0) {
                         const img = imgElement;
-                        const hRatio = drawWidth / img.naturalWidth;
-                        const vRatio = drawHeight / img.naturalHeight;
-                        const ratio = Math.max(hRatio, vRatio);
+                        
+                        // Implement object-fit: cover for canvas
+                        const imgRatio = img.naturalWidth / img.naturalHeight;
+                        const itemRatio = drawWidth_native / drawHeight_native;
 
-                        const imgScaledWidth = img.naturalWidth * ratio;
-                        const imgScaledHeight = img.naturalHeight * ratio;
+                        let sx, sy, sWidth, sHeight; // Source rectangle
+                        let dx, dy, dWidth, dHeight; // Destination rectangle
 
-                        const imgDrawX = drawX + (drawWidth - imgScaledWidth) / 2;
-                        const imgDrawY = drawY + (drawHeight - imgScaledHeight) / 2;
+                        dx = drawX_native;
+                        dy = drawY_native;
+                        dWidth = drawWidth_native;
+                        dHeight = drawHeight_native;
 
-                        ctx.drawImage(img, imgDrawX, imgDrawY, imgScaledWidth, imgScaledHeight);
+                        if (imgRatio > itemRatio) { // Image is wider than item, crop left/right
+                            sHeight = img.naturalHeight;
+                            sWidth = sHeight * itemRatio;
+                            sx = (img.naturalWidth - sWidth) / 2;
+                            sy = 0;
+                        } else { // Image is taller than item, crop top/bottom
+                            sWidth = img.naturalWidth;
+                            sHeight = sWidth / itemRatio;
+                            sy = (img.naturalHeight - sHeight) / 2;
+                            sx = 0;
+                        }
+                        
+                        ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
                     }
                 } else if (item.dataset.type === 'widget') {
-                    const borderRadius = parseFloat(itemStyle.borderRadius) * scaleX;
-                    const padding = parseFloat(itemStyle.paddingLeft) * scaleX;
+                    const borderRadius = parseFloat(itemStyle.borderRadius) * scaleX_display_to_native;
+                    const padding = parseFloat(itemStyle.paddingLeft) * scaleX_display_to_native;
 
-                    ctx.fillStyle = itemStyle.backgroundColor; // Use RGBA for transparency
-                    drawRoundedRect(ctx, drawX, drawY, drawWidth, drawHeight, borderRadius);
+                    ctx.fillStyle = itemStyle.backgroundColor; 
+                    drawRoundedRect(ctx, drawX_native, drawY_native, drawWidth_native, drawHeight_native, borderRadius);
 
                     ctx.fillStyle = itemStyle.color;
                     const cssFontSize = parseFloat(itemStyle.fontSize);
-                    const canvasFontSize = cssFontSize * scaleX;
+                    const canvasFontSize = cssFontSize * scaleX_display_to_native;
                     
                     // Apply font styles for canvas
                     let fontStyle = itemStyle.fontStyle;
                     let fontWeight = itemStyle.fontWeight;
                     let textDecoration = itemStyle.textDecoration;
                     
-                    ctx.font = `${fontStyle} ${fontWeight} ${canvasFontSize}px "${fontFamily}"`; // Combined font string
-                    ctx.textAlign = itemStyle.textAlign; // Use computed text-align
+                    ctx.font = `${fontStyle} ${fontWeight} ${canvasFontSize}px "${fontFamily}"`; 
+                    ctx.textAlign = itemStyle.textAlign; 
                     ctx.textBaseline = 'middle';
                     
-                    // Override ctx.textDecoration for rendering
-                    if (textDecoration.includes('underline')) {
-                        ctx.textDecoration = 'underline';
-                    } else {
-                        ctx.textDecoration = 'none';
-                    }
-
                     const textContent = item.textContent;
-                    const lines = getWrappedTextLines(ctx, textContent, drawWidth - (padding * 2), canvasFontSize * 1.2, fontFamily, fontWeight, fontStyle);
+                    const lines = getWrappedTextLines(ctx, textContent, drawWidth_native - (padding * 2), canvasFontSize * 1.3, fontFamily, fontWeight, fontStyle); // Adjusted line height for canvas
 
-                    let totalTextHeight = lines.length * (canvasFontSize * 1.2);
-                    let startY;
+                    let totalTextHeight = lines.length * (canvasFontSize * 1.3);
+                    let startY_native;
 
                     // Adjust Y position based on text-align and widget height
                     if (itemStyle.justifyContent === 'flex-start') { // Corresponds to align-top
-                        startY = drawY + padding + (canvasFontSize * 0.5); // Initial line height + padding
+                        startY_native = drawY_native + padding + (canvasFontSize * 0.5); 
                     } else if (itemStyle.justifyContent === 'flex-end') { // Corresponds to align-bottom
-                        startY = drawY + drawHeight - padding - totalTextHeight + (canvasFontSize * 0.5);
+                        startY_native = drawY_native + drawHeight_native - padding - totalTextHeight + (canvasFontSize * 0.5);
                     } else { // Center (default)
-                        startY = drawY + (drawHeight / 2) - (totalTextHeight / 2) + (canvasFontSize * 0.5);
+                        startY_native = drawY_native + (drawHeight_native / 2) - (totalTextHeight / 2) + (canvasFontSize * 0.5);
                     }
                     
                     lines.forEach((line, index) => {
-                        let lineX;
+                        let lineX_native;
                         if (ctx.textAlign === 'left') {
-                            lineX = drawX + padding;
+                            lineX_native = drawX_native + padding;
                         } else if (ctx.textAlign === 'right') {
-                            lineX = drawX + drawWidth - padding;
+                            lineX_native = drawX_native + drawWidth_native - padding;
                         } else { // center
-                            lineX = drawX + drawWidth / 2;
+                            lineX_native = drawX_native + drawWidth_native / 2;
                         }
-                        ctx.fillText(line, lineX, startY + (index * (canvasFontSize * 1.2)));
+                        ctx.fillText(line, lineX_native, startY_native + (index * (canvasFontSize * 1.3)));
                         
                         // Manually draw underline if needed (canvas does not automatically apply underline based on ctx.font)
                         if (textDecoration.includes('underline')) {
                             const textMetrics = ctx.measureText(line);
-                            const underlineY = startY + (index * (canvasFontSize * 1.2)) + (canvasFontSize * 0.5); // Position below text
+                            const underlineY_native = startY_native + (index * (canvasFontSize * 1.3)) + (canvasFontSize * 0.5); 
                             
-                            let underlineXStart = lineX;
+                            let underlineXStart = lineX_native;
                             if (ctx.textAlign === 'center') {
-                                underlineXStart = lineX - textMetrics.width / 2;
+                                underlineXStart = lineX_native - textMetrics.width / 2;
                             } else if (ctx.textAlign === 'right') {
-                                underlineXStart = lineX - textMetrics.width;
+                                underlineXStart = lineX_native - textMetrics.width;
                             }
                             ctx.beginPath();
-                            ctx.strokeStyle = ctx.fillStyle; // Same color as text
-                            ctx.lineWidth = Math.max(1, canvasFontSize * 0.05); // Thin line
-                            ctx.moveTo(underlineXStart, underlineY);
-                            ctx.lineTo(underlineXStart + textMetrics.width, underlineY);
+                            ctx.strokeStyle = ctx.fillStyle; 
+                            ctx.lineWidth = Math.max(1, canvasFontSize * 0.05); 
+                            ctx.moveTo(underlineXStart, underlineY_native);
+                            ctx.lineTo(underlineXStart + textMetrics.width, underlineY_native);
                             ctx.stroke();
                         }
                     });
@@ -1383,7 +1581,7 @@
             ctx.lineTo(x + width - radius, y);
             ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
             ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
             ctx.lineTo(x + radius, y + height);
             ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
             ctx.lineTo(x, y + radius);
@@ -1398,24 +1596,23 @@
             let lines = [];
             let currentLine = '';
 
-            // Temporarily set canvas font to accurately measure text
             const originalFont = ctx.font;
-            ctx.font = `${fontStyle} ${fontWeight} ${lineHeight * (0.9)}px "${fontFamily}"`; // Use a slightly smaller px for measurement accuracy
+            ctx.font = `${fontStyle} ${fontWeight} ${lineHeight * (0.9)}px "${fontFamily}"`; 
 
             for (let i = 0; i < words.length; i++) {
-                const testLine = currentLine + words[i] + (i < words.length - 1 ? ' ' : ''); // Add space only if not last word
+                const testLine = currentLine + words[i] + (i < words.length - 1 ? ' ' : ''); 
                 const metrics = ctx.measureText(testLine);
                 const testWidth = metrics.width;
 
-                if (testWidth > maxWidth && i > 0) {
+                if (testWidth > maxWidth && currentLine.length > 0) { // Ensure there's content to push to a new line
                     lines.push(currentLine.trim());
                     currentLine = words[i] + ' ';
                 } else {
                     currentLine = testLine;
                 }
             }
-            lines.push(currentLine.trim()); // Add the last line
-            ctx.font = originalFont; // Restore original font
+            lines.push(currentLine.trim()); 
+            ctx.font = originalFont; 
             return lines;
         }
 
@@ -1430,6 +1627,8 @@
         // Initial save state
         saveState();
         updateUndoRedoButtons();
+        updateWidgetControls(); // Initial state of controls (all disabled)
+        updateImageUploadButton(); // Initial state for image upload button
     </script>
 </body>
 </html>
