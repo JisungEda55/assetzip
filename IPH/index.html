@@ -549,6 +549,10 @@
                     <button id="flipHorizontalBtn" class="button-style tertiary-btn" title="Flip Horizontal (Image Only)"><span class="material-symbols-outlined">flip</span></button>
                     <button id="flipVerticalBtn" class="button-style tertiary-btn" title="Flip Vertical (Image Only)"><span class="material-symbols-outlined" style="transform: rotate(90deg);">flip</span></button>
                 </div>
+                <div class="button-row">
+                    <button id="alignHorizontalBtn" class="button-style tertiary-btn" title="Align Horizontally Center (Image Only)"><span class="material-symbols-outlined">align_horizontal_center</span></button>
+                    <button id="alignVerticalBtn" class="button-style tertiary-btn" title="Align Vertically Center (Image Only)"><span class="material-symbols-outlined">align_vertical_center</span></button>
+                </div>
             </div>
 
             <div class="control-group">
@@ -638,6 +642,10 @@
         const deleteBtn = document.getElementById('deleteBtn');
         const flipHorizontalBtn = document.getElementById('flipHorizontalBtn');
         const flipVerticalBtn = document.getElementById('flipVerticalBtn');
+        // New alignment buttons
+        const alignHorizontalBtn = document.getElementById('alignHorizontalBtn');
+        const alignVerticalBtn = document.getElementById('alignVerticalBtn');
+
         const undoBtn = document.getElementById('undoBtn');
         const redoBtn = document.getElementById('redoBtn');
         const gridSizeInput = document.getElementById('gridSizeInput');
@@ -1244,6 +1252,35 @@
             }
         });
 
+        // --- New Alignment Functions ---
+        alignHorizontalBtn.addEventListener('click', () => {
+            if (activeItem && activeItem.dataset.type === 'image') {
+                alignItemCenterHorizontal(activeItem);
+                saveState();
+            }
+        });
+
+        alignVerticalBtn.addEventListener('click', () => {
+            if (activeItem && activeItem.dataset.type === 'image') {
+                alignItemCenterVertical(activeItem);
+                saveState();
+            }
+        });
+
+        function alignItemCenterHorizontal(item) {
+            const containerRect = canvasContainer.getBoundingClientRect();
+            const itemWidth = parseFloat(item.style.width);
+            const newLeft = (containerRect.width / 2) - (itemWidth / 2);
+            item.style.left = `${newLeft}px`;
+        }
+
+        function alignItemCenterVertical(item) {
+            const containerRect = canvasContainer.getBoundingClientRect();
+            const itemHeight = parseFloat(item.style.height);
+            const newTop = (containerRect.height / 2) - (itemHeight / 2);
+            item.style.top = `${newTop}px`;
+        }
+
         // Undo/Redo
         undoBtn.addEventListener('click', () => restoreState(historyPointer - 1));
         redoBtn.addEventListener('click', () => restoreState(historyPointer + 1));
@@ -1313,7 +1350,7 @@
                 
                 initialItemRotation = Math.atan2(matrix.b, matrix.a) * (180 / Math.PI);
                 
-                // Calculate rotation origin (center of the element relative to the document)
+                // Calculate rotation origin (center of the item relative to the document)
                 rotationOriginX = rect.left + rect.width / 2;
                 rotationOriginY = rect.top + rect.height / 2;
 
@@ -1469,9 +1506,10 @@
                 btn.classList.remove('filled'); // Clear filled state
             });
 
-            // Disable flip buttons by default
-            flipHorizontalBtn.disabled = true;
-            flipVerticalBtn.disabled = true;
+            // Disable image-specific buttons by default
+            const imageControls = [flipHorizontalBtn, flipVerticalBtn, alignHorizontalBtn, alignVerticalBtn];
+            imageControls.forEach(btn => btn.disabled = true);
+
 
             if (activeItem) {
                 if (activeItem.dataset.type === 'widget') {
@@ -1488,8 +1526,7 @@
                     widgetBgOpacityInput.value = bgColorMatch && bgColorMatch[5] !== undefined ? parseFloat(bgColorMatch[5]) : '0.6';
 
                 } else if (activeItem.dataset.type === 'image') {
-                    flipHorizontalBtn.disabled = false;
-                    flipVerticalBtn.disabled = false;
+                    imageControls.forEach(btn => btn.disabled = false);
                 }
             }
         }
