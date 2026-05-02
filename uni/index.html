@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아야츠노 유니 - SUPADOPA Teaser</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Comic+Neue:wght@700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff9ed8 0%, #c39cff 30%, #9edbff 70%, #a8ffcc 100%);
+            overflow: hidden;
+            position: relative;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        /* 부드러운 배경 효과 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+        }
+
+        video {
+            width: 100%;
+            max-width: 820px;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25),
+                        0 0 0 12px rgba(255, 255, 255, 0.4);
+            border: 6px solid rgba(255, 255, 255, 0.9);
+            background: #000;
+        }
+
+        .title {
+            margin-top: 20px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-family: 'Comic Neue', cursive;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 귀여운 하트 애니메이션 */
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            color: #ff6bcb;
+            opacity: 0.6;
+            animation: floatHeart 8s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(30deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <video 
+            src="https://github.com/JisungEda55/assetzip/raw/refs/heads/main/%EC%95%84%EC%95%BC%EC%B8%A0%EB%85%B8-%EC%9C%A0%EB%8B%88-_-%E2%80%98SUPADOPA%E2%80%99-Teaser.webm" 
+            autoplay 
+            loop 
+            muted 
+            playsinline>
+            Your browser does not support the video tag.
+        </video>
+        
+        <div class="title">아야츠노 유니</div>
+        <div class="subtitle">『SUPADOPA』 Teaser 💖</div>
+    </div>
+
+    <script>
+        // 귀여운 하트 애니메이션
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.textContent = ['💗', '💖', '✨', '💘'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 6 + 7) + 's';
+            heart.style.fontSize = (Math.random() * 1.2 + 1.3) + 'rem';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 15000);
+        }
+
+        // 주기적으로 하트 생성
+        setInterval(createHeart, 380);
+        // 처음에도 몇 개 생성
+        for (let i = 0; i < 6; i++) {
+            setTimeout(createHeart, i * 200);
+        }
+    </script>
+</body>
+</html>
