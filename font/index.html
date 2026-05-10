@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 일본 광고 카피 폰트 데모 | 5 Fonts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hina+Mincho&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@100;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', system-ui, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 40px 20px; line-height: 1.7; }
+        h1 { text-align: center; margin-bottom: 20px; font-size: 2.6em; }
+        .subtitle { text-align: center; font-size: 1.3em; color: #555; margin-bottom: 50px; }
+        .font-card { 
+            background: white; border-radius: 20px; padding: 35px; margin-bottom: 50px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #eee;
+        }
+        .font-name { font-size: 2em; margin-bottom: 15px; border-bottom: 4px solid #ff6b6b; padding-bottom: 12px; }
+        .weight-btns { margin: 20px 0; }
+        .weight-btn { 
+            padding: 10px 18px; margin: 6px 4px; border: 1px solid #ddd; background: #fff; 
+            border-radius: 30px; cursor: pointer; font-size: 0.95em; transition: all 0.2s;
+        }
+        .weight-btn.active { background: #ff6b6b; color: white; border-color: #ff6b6b; }
+        .preview { 
+            padding: 30px; border: 2px dashed #ddd; border-radius: 16px; 
+            margin: 25px 0; background: #fdfdfd; min-height: 220px;
+        }
+        .sample-text { margin: 18px 0; }
+        .tag { background: #fff3cd; padding: 6px 14px; border-radius: 999px; font-size: 0.92em; display: inline-block; margin: 6px 4px; }
+    </style>
+</head>
+<body>
+    <h1>🌸 일본 광고 카피 폰트 데모</h1>
+    <p class="subtitle">5개 폰트 × 다양한 Weight × 일본어·영어 실제 광고 카피 모음</p>
+
+    <!-- 1. Noto Sans JP -->
+    <div class="font-card">
+        <div class="font-name">#01 Noto Sans JP</div>
+        <div class="weight-btns" id="btns1">
+            <button class="weight-btn active" data-weight="400">Regular 400</button>
+            <button class="weight-btn" data-weight="500">Medium 500</button>
+            <button class="weight-btn" data-weight="700">Bold 700</button>
+            <button class="weight-btn" data-weight="900">Black 900</button>
+        </div>
+        <div class="preview" id="preview1" style="font-family: 'Noto Sans JP', sans-serif;">
+            <div class="sample-text" style="font-size:26px;">私はまだ何者でもない。だから何にでもなれる。</div>
+            <div class="sample-text" style="font-size:22px;">You are more than you imagine. — ポカリスエット</div>
+            <div class="tag">Pocari Sweat</div>
+            
+            <div class="sample-text" style="font-size:24px;">NO MUSIC, NO LIFE.</div>
+            <div class="tag">TOWER RECORDS</div>
+        </div>
+    </div>
+
+    <!-- 2. Hina Mincho -->
+    <div class="font-card">
+        <div class="font-name">#02 Hina Mincho</div>
+        <div class="preview" id="preview2" style="font-family: 'Hina Mincho', serif; font-size:28px;">
+            愛は食卓にある。<br>
+            <span style="font-size:23px;">Love is on the table.</span><br><br>
+            
+            一瞬も一生も美しく。<br>
+            <span style="font-size:22px;">Beautiful in every moment.</span>
+            <div class="tag">Shiseido</div>
+        </div>
+    </div>
+
+    <!-- 3. Zen Kaku Gothic New -->
+    <div class="font-card">
+        <div class="font-name">#03 Zen Kaku Gothic New</div>
+        <div class="weight-btns" id="btns3">
+            <button class="weight-btn active" data-weight="400">Regular</button>
+            <button class="weight-btn" data-weight="500">Medium</button>
+            <button class="weight-btn" data-weight="700">Bold</button>
+            <button class="weight-btn" data-weight="900">Black</button>
+        </div>
+        <div class="preview" id="preview3" style="font-family: 'Zen Kaku Gothic New', sans-serif;">
+            <div class="sample-text" style="font-size:25px;">去年の服が似合わない。私は進化した。</div>
+            <div class="sample-text" style="font-size:21px;">The future is what we create.</div>
+            
+            <div class="sample-text" style="font-size:24px;">未来はまだ来ていない。ただ、作られていないだけだ。</div>
+            <div class="tag">Recruit / Modern Ad</div>
+        </div>
+    </div>
+
+    <!-- 4. Kiwi Maru -->
+    <div class="font-card">
+        <div class="font-name">#04 Kiwi Maru</div>
+        <div class="preview" id="preview4" style="font-family: 'Kiwi Maru', serif;">
+            <div style="font-size:28px;">丸みがあるのに、優しい。</div>
+            <div style="font-size:23px;">Warm yet sharp Japanese font.</div><br>
+            
+            <div style="font-size:26px;">ホンキで遊ぼう。</div>
+            <div style="font-size:21px;">Let's play seriously.</div>
+            <div class="tag">Canon / Hobby Campaign</div>
+        </div>
+    </div>
+
+    <!-- 5. LINE Seed JP -->
+    <div class="font-card">
+        <div class="font-name">#05 LINE Seed JP</div>
+        <div class="weight-btns" id="btns5">
+            <button class="weight-btn active" data-weight="100">Thin 100</button>
+            <button class="weight-btn" data-weight="400">Regular 400</button>
+            <button class="weight-btn" data-weight="700">Bold 700</button>
+            <button class="weight-btn" data-weight="800">ExtraBold 800</button>
+        </div>
+        <div class="preview" id="preview5" style="font-family: 'LINE Seed JP', sans-serif;">
+            <div class="sample-text" style="font-size:27px;">SHIFT the future.</div>
+            <div class="sample-text" style="font-size:22px;">Drive your dreams.</div>
+            <div class="tag">Nissan / Toyota</div>
+            
+            <div class="sample-text" style="font-size:25px;">私はまだ、始まったばかり。</div>
+            <div class="tag">Young Brand Campaign</div>
+        </div>
+    </div>
+
+    <footer style="text-align:center; margin-top:70px; color:#777; font-size:1.05em;">
+        <p>Google Fonts 기반 • 실시간 Weight 변경 • 일본어·영어 광고 카피 다수 수록 ✨</p>
+        <p>더 많은 문구 추가나 특정 브랜드 테마로 변경 원하시면 언제든 말씀해주세요!</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.weight-btns').forEach(group => {
+            group.addEventListener('click', (e) => {
+                if (e.target.classList.contains('weight-btn')) {
+                    group.querySelectorAll('.weight-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const weight = e.target.dataset.weight;
+                    const preview = group.parentElement.querySelector('.preview');
+                    if (preview) preview.style.fontWeight = weight;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
